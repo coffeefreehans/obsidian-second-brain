@@ -1,6 +1,6 @@
 <p align="center">
   <a href="https://github.com/eugeniughelbur/obsidian-second-brain">
-    <img src="media/banner.png" alt="obsidian-second-brain — one brain, four CLIs, 32 commands. A cross-CLI skill for Obsidian that runs on Claude Code, Codex CLI, Gemini CLI, and OpenCode." width="100%" />
+    <img src="media/banner.png" alt="obsidian-second-brain — one brain, four CLIs, 33 commands. A cross-CLI skill for Obsidian that runs on Claude Code, Codex CLI, Gemini CLI, and OpenCode." width="100%" />
   </a>
 </p>
 
@@ -34,17 +34,23 @@
   <br /><br />
   <em>Every source updates existing pages instead of just appending new ones. Contradictions reconcile automatically. Your vault compounds while you sleep.</em>
   <br /><br />
-  <em>32 commands &middot; auto-synthesis &middot; thinking tools that argue with you</em>
+  <em>33 commands &middot; auto-synthesis &middot; thinking tools that argue with you</em>
   <br /><br />
   <em>live research from X, the web, and YouTube &middot; 4 scheduled agents &middot; 4 role presets</em>
   <br /><br />
   <em>write-time AI-first validator &middot; <code>/create-command</code> interview flow &middot; multilingual trigger schema</em>
   <br /><br />
   <a href="#what-happens-when-you-install-this">See it in action</a> &middot;
-  <a href="#32-commands">All commands</a> &middot;
+  <a href="#33-commands">All commands</a> &middot;
   <a href="#install">Install</a> &middot;
   <a href="#choose-your-preset">Presets</a> &middot;
   <a href="https://github.com/eugeniughelbur/obsidian-second-brain/discussions">Discussions</a>
+</p>
+
+<p align="center">
+  <strong>v0.8 (May 2026):</strong> <code>/notebooklm</code> rewritten to use Google's Gemini File Search API.<br/>
+  <em>One HTTP call. No browser. Source-grounded synthesis over your own vault.</em><br/>
+  <a href="CHANGELOG.md">See the changelog &rarr;</a>
 </p>
 
 <p align="center">
@@ -67,9 +73,14 @@
 </p>
 
 <p align="center">
-  <strong>Research toolkit</strong> — <code>/x-read</code> · <code>/x-pulse</code> · <code>/research</code> · <code>/research-deep</code> · <code>/notebooklm</code> · <code>/youtube</code><br/>
-  <em>Pull live X posts, web research with citations, YouTube transcripts, and NotebookLM source-grounded answers straight into your vault as AI-first notes. <br/>
-  Vault-first synthesis knows what you already know and fills only the gaps. The open-web track and the source-grounded track run in parallel.</em>
+  <strong>Research toolkit · dual-track</strong><br/>
+  <code>/x-read</code> · <code>/x-pulse</code> · <code>/research</code> · <code>/research-deep</code> · <code>/notebooklm</code> · <code>/youtube</code>
+</p>
+
+<p align="center">
+  <em><strong>Open-web track</strong> · <code>/research-deep</code> via Perplexity + Grok. Pulls fresh signal from outside.<br/>
+  <strong>Source-grounded track</strong> · <code>/notebooklm</code> via Gemini File Search. Reads your own vault.<br/>
+  Run both for high-stakes topics. <strong>Contradictions across the two are where the insight is.</strong></em>
 </p>
 
 <p align="center">
@@ -220,7 +231,7 @@ Free transcript via youtube-transcript-api. Optional metadata + top comments via
   |                                          |
   +------------------------------------------+
   |                                          |
-  |   LAYER 4: Research Toolkit (5 commands) |
+  |   LAYER 4: Research Toolkit (6 commands) |
   |   Claude pulls knowledge in              |
   |                                          |
   +------------------------------------------+
@@ -240,7 +251,7 @@ Free transcript via youtube-transcript-api. Optional metadata + top comments via
 
 ---
 
-## 32 Commands
+## 33 Commands
 
 ### Operations -- Claude remembers
 
@@ -294,7 +305,7 @@ Powered by xAI Grok (live X access) + Perplexity Sonar (web research) + YouTube.
 | `/x-pulse [topic]` | Scan X for what's trending — themes, voices, hooks, post ideas |
 | `/research [topic]` | Web research with citations — full dossier with recency markers and open questions |
 | `/research-deep [topic]` | Vault-first synthesis (open web) — scans your vault, finds gaps, fills them via Perplexity + Grok, propagates updates across people/projects/ideas |
-| `/notebooklm [topic]` | Vault-first synthesis (source-grounded) — bundles your vault notes into a NotebookLM source, you run NotebookLM grounded in your own sources, response saves back to the vault |
+| `/notebooklm [topic]` | Vault-grounded synthesis via Gemini File Search. Uploads top 12 vault notes, returns a grounded answer with citations. No browser, one HTTP call. Pairs with `/research-deep` for dual-track research. |
 | `/youtube [url]` | Extract transcript + metadata + top comments → AI-first summary |
 
 **Setup:** copy `.env.example` to `~/.config/obsidian-second-brain/.env`, add your keys (xAI, Perplexity, YouTube optional). Run `install.sh` and answer "y" to the research prompt to do this automatically.
@@ -418,6 +429,24 @@ Phase 4: Synthesis (sonar-reasoning-pro)
 ```
 
 Vault-first means it doesn't waste tokens re-researching what you already knew. ~$0.40/call.
+
+---
+
+**`/notebooklm "AI-first vault rule"`** — vault-grounded, no browser
+
+Scans the vault, uploads the top 12 most relevant notes to a Gemini File Search store, asks Gemini 2.5 Flash to synthesize against THOSE sources only with citations, writes the synthesis to `Research/NotebookLM/` as an AI-first note, deletes the store.
+
+```
+Vault baseline: 12 notes
+Model: gemini-2.5-flash
+Uploading 12 notes... done
+Asking Gemini, grounded against the uploaded sources...
+
+=== SAVED ===
+Research/NotebookLM/2026-05-15 - ai-first-vault-rule.md
+```
+
+Pair with `/research-deep` on the same topic. Open-web view + vault-grounded view rarely contradict. Where they do, that's where you have a take worth posting. ~$0.004/call on free-tier Flash, ~$0.06 on paid Pro.
 
 ---
 
@@ -570,7 +599,7 @@ Run `bash scripts/build.sh` with no arguments to build all four platforms at onc
 
 ### Research toolkit (optional)
 
-The 5 research commands need API keys. Run `install.sh` and answer "y" to the research prompt — it'll set up `~/.config/obsidian-second-brain/.env`. Or do it manually:
+The 6 research commands need API keys. Run `install.sh` and answer "y" to the research prompt — it'll set up `~/.config/obsidian-second-brain/.env`. Or do it manually:
 
 ```bash
 mkdir -p ~/.config/obsidian-second-brain
@@ -586,9 +615,10 @@ Keys you need:
 |---|---|---|---|
 | `XAI_API_KEY` | [console.x.ai](https://console.x.ai) | `/x-read`, `/x-pulse`, `/research-deep` X pulse, `/youtube` summary | Pay-per-use, ~$0.05/call |
 | `PERPLEXITY_API_KEY` | [perplexity.ai/settings/api](https://perplexity.ai/settings/api) | `/research`, `/research-deep` | Pay-per-use, ~$0.02-$0.50/call |
-| `YOUTUBE_API_KEY` | [console.cloud.google.com](https://console.cloud.google.com) | `/youtube` metadata + comments (optional — transcripts free without) | Free tier 10k units/day |
+| `GEMINI_API_KEY` | [aistudio.google.com/apikey](https://aistudio.google.com/apikey) | `/notebooklm` (vault-grounded synthesis via Gemini File Search) | Free tier covers it. Paid: ~$0.004/call (Flash), ~$0.06/call (Pro). |
+| `YOUTUBE_API_KEY` | [console.cloud.google.com](https://console.cloud.google.com) | `/youtube` metadata + comments (optional, transcripts free without) | Free tier 10k units/day |
 
-Without keys, the existing 26 vault commands still work fine. Research toolkit just degrades gracefully.
+Without keys, the existing 27 vault commands still work fine. Research toolkit just degrades gracefully.
 
 ---
 
@@ -613,7 +643,7 @@ Yes. The repo ships a build script that compiles the platform-neutral source int
 Yes. The skill writes to your vault as standard markdown files. Obsidian Sync, iCloud, Syncthing, and Git-based sync all work without modification.
 
 ### Do I need API keys to use this?
-No. The original 26 vault commands (`/obsidian-save`, `/obsidian-daily`, etc.) work without any API keys. Only the 5 research commands (`/x-read`, `/x-pulse`, `/research`, `/research-deep`, `/youtube`) require API keys for xAI Grok, Perplexity, and optionally YouTube Data API v3. Without keys, those commands degrade gracefully — they exit with a clear setup message.
+No. The original 27 vault commands (`/obsidian-save`, `/obsidian-daily`, etc.) work without any API keys. Only the 6 research commands (`/x-read`, `/x-pulse`, `/research`, `/research-deep`, `/notebooklm`, `/youtube`) require API keys for xAI Grok, Perplexity, Google Gemini, and optionally YouTube Data API v3. Without keys, those commands degrade gracefully — they exit with a clear setup message.
 
 ### How is this different from Notion AI or Mem?
 Notion AI and Mem are closed-source SaaS products that own your data. This skill stores everything as plain markdown in your local Obsidian vault, with no vendor lock-in. The AI is on top of your data, not behind it. You can switch tools or stop using the skill at any point and still have your full vault.
